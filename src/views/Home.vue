@@ -2,6 +2,7 @@
 .home
   .section
     .container
+      b-message(type="is-info") This is a work in progress. If you have any problems/suggestions please comment over at <a href="https://github.com/wellcaffeinated/swn-tables/issues">github issues</a>.
       h2.title Weapons
       .weapons-table
         b-field(grouped)
