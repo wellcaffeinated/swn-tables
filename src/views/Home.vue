@@ -61,8 +61,14 @@
                 .column.is-half
                   .content
                     p {{ props.row.Description }}
-                .column(v-if="props.row.Notes")
-                  b-message(type="is-info", has-icon) {{ props.row.Notes }}
+                .column
+                  b-message(v-if="props.row.Notes", type="is-info", has-icon) {{ props.row.Notes }}
+                  .content.tag-notes(v-if="props.row.Tags.length")
+                    strong Tags
+                    ul
+                      li(v-for="tag in props.row.Tags")
+                        b-tag(type="is-primary") {{ tag | startCase }}
+                        span &nbsp;{{ tagDescs[tag] }}
               p Source: {{ props.row.Source }}
 </template>
 
@@ -85,6 +91,7 @@
 <script>
 import _filter from 'lodash/filter'
 import _some from 'lodash/some'
+import _sortBy from 'lodash/sortBy'
 import { fetchDataTable } from '@/lib/tables'
 
 function fuzzyFilter(arr, str){
@@ -105,12 +112,13 @@ export default {
       , suppress: 'Can Suppress. Double the usual ammunition is fired in one round, and every target in front of the weapon that is not under hard cover is automatically hit for half normal damage. A successful Evasion or Luck saving throw eliminates this damage.'
       , nonlethal: 'Does not deal lethal damage if it deals damage at all.'
       , spray_and_pray: 'Can target 3x3 area to hit multiple enemies at -3 chance to hit, consumes 10 ammo.'
+      , ap1: 'Armor Piercing. Decreases target’s AC by 1.'
     }
   })
   , mounted(){
     fetchDataTable('data/weapons.csv').then(data => {
-      this.raw = Object.freeze(data.map(r => {
-        const tags = r.Tags.split(',')
+      this.raw = Object.freeze(_sortBy(data, ['Tech', 'Class']).map(r => {
+        const tags = r.Tags.replace(/\s/g, '').split(',')
         r.Tags = r.Tags ? tags : []
         return r
       }))
