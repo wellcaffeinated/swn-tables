@@ -12,6 +12,8 @@
       )
     b-field
       b-button(@click="resetSorting") Clear Sorting
+    b-field
+      b-button(@click="randomFromSelection") Random From Selection
   b-table(
     ref="table"
     , :data="rows"
@@ -90,6 +92,8 @@
 import Fuse from 'fuse.js'
 import _sortBy from 'lodash/sortBy'
 import _throttle from 'lodash/throttle'
+import _sample from 'lodash/sample'
+import _filter from 'lodash/filter'
 import { fetchDataTable } from '@/lib/tables'
 
 export default {
@@ -133,8 +137,19 @@ export default {
       return [this.selected.Name]
     }
     , rows(){
-      if (this.search){
-        return this.fuse.search(this.searchCommit).map(a => a.item)
+      if (this.searchCommit){
+        let search = this.searchCommit.split(' ')
+        const filters = search.filter(s => s.indexOf(':') > -1).reduce((o, f) => {
+          const [key, val] = f.split(':')
+          o[key] = val
+          return o
+        }, {})
+        search = search.filter(s => s.indexOf(':') === -1).join(' ')
+        let rawResults = this.raw
+        if (search){
+          rawResults = this.fuse.search(search).map(a => a.item)
+        }
+        return _filter(rawResults, filters)
       }
       return this.raw
     }
@@ -159,6 +174,12 @@ export default {
   , methods: {
     resetSorting(){
       this.$refs.table.resetMultiSorting()
+    }
+    , randomFromSelection(){
+      this.selected = _sample(this.rows)
+      this.$nextTick(() => {
+        this.$refs.table.$el.querySelector('.detail').scrollIntoView({ block: 'center' })
+      })
     }
   }
 }

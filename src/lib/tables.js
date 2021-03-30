@@ -2,6 +2,10 @@ import axios from 'axios'
 import parse from 'csv-parse'
 import _random from 'lodash/random'
 import _sumBy from 'lodash/sumBy'
+import _isArray from 'lodash/isArray'
+import _isString from 'lodash/isString'
+import _sampleSize from 'lodash/sampleSize'
+import { result } from 'lodash'
 
 export function fetchDataTable(url){
   return axios(url).then(res => {
@@ -32,6 +36,7 @@ export class UnknownRollExpression extends Error {
 
 const rollExprReg = /^\s*((?<sign>[+-]?)\s*((?<value>\d+)|((?<count>\d+)?d(?<dice>\d+))))(\s*(?<more>[+-]+.*))?\s*$/
 
+// Evaluate a roll expression like "2d6+5"
 export function evaluateRollExpression(expr){
   let result = expr.match(rollExprReg)
   if (!result){ throw new UnknownRollExpression() }
@@ -66,4 +71,84 @@ export function evaluateRollExpression(expr){
     , parts
     , total: _sumBy(parts, 'value')
   }
+}
+
+const tableIdsReg = /(^|[^#])#(({([A-Za-z\-_]+)})|(([A-Za-z\-_]+)))/g
+const tableIdReg = /#(({(?<id1>[A-Za-z\-_]+)})|((?<id2>[A-Za-z\-_]+)))/
+const tableExpressionReg = /^(?<before>[^#]+(##)*)?(#(({(?<id1>[A-Za-z\-_]+)})|((?<id2>[A-Za-z\-_]+))))?(?<after>.+)?/
+
+export function evaluateRandomTableExpression(expression, tableSpec) {
+  const tree = assembleRandomTableTree(expression, tableSpec)
+  const result = evaluateRandomTableTree(tree)
+  const html = evaluateRandomTableTreeHTML(tree)
+  return {
+    tree
+    , result
+    , html
+  }
+}
+
+export function evaluateRandomTableTree(tree){
+  return tree.reduce((acc, a) => {
+    if (_isArray(a.value)){
+      return acc + evaluateRandomTableTree(a.value)
+    }
+    return acc + a.value
+  }, '')
+}
+
+export function evaluateRandomTableTreeHTML(tree) {
+  return tree.reduce((acc, a) => {
+    if (_isArray(a.value)) {
+      return acc + ['<span class="rollable">', evaluateRandomTableTreeHTML(a.value), '</span>'].join('')
+    }
+    return acc + a.value
+  }, '')
+}
+
+export function assembleRandomTableTree(expression, tableSpec){
+  if (_isArray(expression)){
+    const result = _sampleSize(expression)[0]
+    return assembleRandomTableTree(result, tableSpec)
+  } else if (!_isString(expression)){
+    return ''
+  }
+
+  const groups = expression.match(tableExpressionReg).groups
+  let tree = []
+
+  if (groups.before){
+    tree = [{
+      type: 'text'
+      , value: groups.before
+    }]
+  }
+
+  const id = groups.id1 || groups.id2
+  if (id){
+    const roll = assembleRandomTableTree(tableSpec[id], tableSpec)
+    tree.push({
+      type: 'roll'
+      , id
+      , value: roll
+    })
+  }
+
+  if (groups.after){
+    const after = assembleRandomTableTree(groups.after, tableSpec)
+    tree = tree.concat(after)
+  }
+
+  return tree
+
+  // parse table expression
+  // return expression.replace(tableIdsReg, match => {
+  //   const g = match.match(tableIdReg).groups
+  //   const id = g.id1 || g.id2
+  //   const result = evaluateRandomTableExpression(tableSpec[id], tableSpec)
+  //   if (match[0] === ' '){
+  //     return ' ' + result
+  //   }
+  //   return result
+  // })
 }
