@@ -5,7 +5,6 @@ import _sumBy from 'lodash/sumBy'
 import _isArray from 'lodash/isArray'
 import _isString from 'lodash/isString'
 import _sampleSize from 'lodash/sampleSize'
-import { result } from 'lodash'
 
 export function fetchDataTable(url){
   return axios(url).then(res => {

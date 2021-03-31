@@ -22,3 +22,7 @@ yarn lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Notes
+
+https://github.com/BTMorton/dnd-5e-srd/tree/master/json

@@ -5,7 +5,7 @@
       b-message(type="is-info") This is a work in progress. If you have any problems/suggestions please comment over at <a href="https://github.com/wellcaffeinated/swn-tables/issues">github issues</a>.
       .columns
         .column
-          .box(@click="randomTable()")
+          a.box(@click="randomTable()")
             h6.title Random Artifact
             .content(v-html="randomTableText")
         .column
@@ -37,7 +37,7 @@ export default {
     , itemsTableSpec: {}
   })
   , mounted(){
-    axios('/data/random-tables/random-artifacts.json').then(res => {
+    axios('data/random-tables/random-artifacts.json').then(res => {
       this.itemsTableSpec = res.data
     })
   }
