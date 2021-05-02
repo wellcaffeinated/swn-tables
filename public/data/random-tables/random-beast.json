@@ -1,0 +1,124 @@
+{
+    "beast": "<p>Features: #features</p><p>Body: #body</p><p>Limbs: #limbs</p><p>Skin: #skin</p><p>Weapon: #weapon</p><p>Size: #size</p><p>Behaviour: #behaviour</p><p>Discharges: #discharges</p><p>Poison: #poison</p>",
+    "features": [
+        "Amphibian, froggish or newtlike",
+        "Bird, winged and feathered",
+        "Fish, scaled and torpedo-bodied",
+        "Insect, beetle-like or fly-winged",
+        "Mammal, hairy and fanged",
+        "Reptile, lizardlike and long-bodied",
+        "Spider, many-legged and fat",
+        "Exotic, made of wholly alien elements",
+        "Roll twice and mix"
+    ],
+    "body": [
+        "Humanoid",
+        "Quadruped",
+        "Many-legged",
+        "Bulbous",
+        "Amorphous",
+        "Roll twice"
+    ],
+    "limbs": [
+        "Wings",
+        "Many joints",
+        "Tentacles",
+        "Opposable thumbs",
+        "Retractable",
+        "Varying sizes"
+    ],
+    "skin": [
+        "Hard shell",
+        "Exoskeleton",
+        "Odd texture",
+        "Molts regularly",
+        "Harmful to touch",
+        "Wet or slimy"
+    ],
+    "weapon": [
+        "Teeth or mandibles",
+        "Claws",
+        "Poison",
+        "Harmful discharge",
+        "Pincers",
+        "Horns"
+    ],
+    "size": [
+        "Cat-sized",
+        "Wolf-sized",
+        "Calf-sized",
+        "Bull-sized",
+        "Hippo-sized",
+        "Elephant-sized"
+    ],
+    "behaviour": [
+        "Predator: #predator",
+        "Prey: #prey",
+        "Scavenger: #scavenger"
+    ],
+    "predator": [
+        "Hunts in kin-group packs",
+        "Favors ambush attacks",
+        "Cripples prey and waits for death",
+        "Pack supports alpha-beast attack",
+        "Lures or drives prey into danger",
+        "Hunts as a lone, powerful hunter",
+        "Only is predator at certain times",
+        "Mindlessly attacks humans"
+    ],
+    "prey": [
+        "Moves in vigilant herds",
+        "Exists in small family groups",
+        "They all team up on a single foe",
+        "They go berserk when near death",
+        "They're violent in certain seasons",
+        "They’re vicious if threatened",
+        "Symbiotic creature protects them",
+        "Breeds at tremendous rates"
+    ],
+    "scavenger": [
+        "Never attacks unwounded prey",
+        "Uses other beasts as harriers",
+        "Always flees if significantly hurt",
+        "Poisons prey, waits for it to die",
+        "Disguises itself as its prey",
+        "Remarkably stealthy",
+        "Summons predators to weak prey",
+        "Steals prey from weaker predator"
+    ],
+    "discharges": [
+        "Acidic spew doing its damage on a hit",
+        "Toxic spittle or cloud, use adjacent chart",
+        "Super-heated or super-chilled spew",
+        "Sonic drill or other disabling noise",
+        "Natural laser or plasma discharge",
+        "Nauseating stench or disabling chemical",
+        "Equipment-melting corrosive",
+        "Explosive pellets or chemical catalysts"
+    ],
+    "poison": "Poison causes #poison_result within #poison_onset and lasts #poison_duration",
+    "poison_result": [
+        "Death",
+        "Paralysis",
+        "1d4 dmg per onset interval",
+        "Convulsions",
+        "Blindness",
+        "Hallucinations"
+    ],
+    "poison_onset": [
+        "Instant",
+        "1 round",
+        "1d6 rounds",
+        "1 minute",
+        "1d6 minutes",
+        "1 hour"
+    ],
+    "poison_duration": [
+        "1d6 rounds",
+        "1 minute",
+        "10 minutes",
+        "1 hour",
+        "1d6 hours",
+        "1d6 days"
+    ]
+}

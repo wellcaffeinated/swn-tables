@@ -5,9 +5,11 @@
       b-message(type="is-info") This is a work in progress. If you have any problems/suggestions please comment over at <a href="https://github.com/wellcaffeinated/swn-tables/issues">github issues</a>.
       .columns
         .column
-          a.box(@click="randomTable()")
-            h6.title Random Artifact
-            .content(v-html="randomTableText")
+          RandomTable(title="Random Artifact", :spec="itemsTableSpec", roll-target="#artifact")
+          RandomTable(title="Random Person", :spec="personTableSpec", roll-target="#person")
+          RandomTable(title="Random NPC", :spec="npcTableSpec", roll-target="#npc")
+          RandomTable(title="Random Patron", :spec="patronTableSpec", roll-target="#patron")
+          RandomTable(title="Random Beast", :spec="beastTableSpec", roll-target="#beast")
         .column
           RollBox
       h2.title Weapons
@@ -22,6 +24,7 @@
 
 <script>
 import WeaponsTable from '@/components/WeaponsTable'
+import RandomTable from '@/components/RandomTable'
 import RollBox from '@/components/RollBox'
 import { evaluateRandomTableExpression } from '@/lib/tables'
 import axios from 'axios'
@@ -31,26 +34,35 @@ export default {
   , components: {
     WeaponsTable
     , RollBox
+    , RandomTable
   }
   , data: () => ({
-    randomTableResult: []
-    , itemsTableSpec: {}
+    itemsTableSpec: {}
+    , npcTableSpec: {}
+    , personTableSpec: {}
+    , patronTableSpec: {}
+    , beastTableSpec: {}
   })
   , mounted(){
     axios('data/random-tables/random-artifacts.json').then(res => {
       this.itemsTableSpec = res.data
     })
+    axios('data/random-tables/random-npc.json').then(res => {
+      this.npcTableSpec = res.data
+    })
+    axios('data/random-tables/random-person.json').then(res => {
+      this.personTableSpec = res.data
+    })
+    axios('data/random-tables/random-patron.json').then(res => {
+      this.patronTableSpec = res.data
+    })
+    axios('data/random-tables/random-beast.json').then(res => {
+      this.beastTableSpec = res.data
+    })
   }
   , computed: {
-    randomTableText(){
-      if (!this.randomTableResult.html){ return '(click to roll)' }
-      return this.randomTableResult.html
-    }
   }
   , methods: {
-    randomTable(){
-      this.randomTableResult = evaluateRandomTableExpression('#artifact', this.itemsTableSpec)
-    }
   }
 }
 </script>
