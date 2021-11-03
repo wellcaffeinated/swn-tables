@@ -3,9 +3,9 @@
   .section
     .container
       .columns
-        .column.is-narrow
+        .column.is-one-third
           .box
-            b-tabs(:animated="false")
+            b-tabs(:animated="false", expanded)
               b-tab-item(label="Overview")
                 .content
                   p.image.character-image
@@ -48,7 +48,6 @@
                         b-tag(type="is-dark", size="is-medium") AB
                         b-tag(type="is-danger", size="is-medium") {{ characterAB }}
               b-tab-item(label="Bio")
-                h4.heading bio
                 table.table
                   tbody
                     tr
@@ -76,32 +75,12 @@
                       td
                         b-input(size="is-small", v-model="character.faction")
               b-tab-item(label="Stats")
-                h4.heading stats
                 table.table
                   tbody
                     tr
                       td Max HP
                       td
                         b-input(type="number", size="is-small", min="0", v-model.number="character.maxHP")
-        .column
-          .box
-            h4.heading saving throws
-            b-field(grouped, group-multiline)
-              .control
-                b-taglist(attached)
-                  b-tag(type="is-dark", size="is-large") mental
-                  b-tag(type="is-primary", size="is-large") {{ savingThrows.mental }}
-              .control
-                b-taglist(attached)
-                  b-tag(type="is-dark", size="is-large") physical
-                  b-tag(type="is-primary", size="is-large") {{  savingThrows.physical }}
-              .control
-                b-taglist(attached)
-                  b-tag(type="is-dark", size="is-large") evasion
-                  b-tag(type="is-primary", size="is-large") {{  savingThrows.evasion }}
-          .columns
-            .column.is-half
-              .box
                 table.table
                   thead
                     tr
@@ -118,6 +97,24 @@
                         b-input.attr-adj(type="number", size="is-small", v-model.number="character.attributeAdjustments[attr]")
                       td
                         .result {{ attributeMods[attr] }}
+
+        .column
+          .box
+            h4.heading saving throws
+            b-field(grouped, group-multiline)
+              .control.clickable(@click="rollSave('mental')")
+                b-taglist(attached)
+                  b-tag(type="is-dark", size="is-large") mental
+                  b-tag(type="is-primary", size="is-large") {{ savingThrows.mental }}
+              .control.clickable(@click="rollSave('physical')")
+                b-taglist(attached)
+                  b-tag(type="is-dark", size="is-large") physical
+                  b-tag(type="is-primary", size="is-large") {{  savingThrows.physical }}
+              .control.clickable(@click="rollSave('evasion')")
+                b-taglist(attached)
+                  b-tag(type="is-dark", size="is-large") evasion
+                  b-tag(type="is-primary", size="is-large") {{  savingThrows.evasion }}
+          .columns
             .column.is-half
               .box
                 table.table
@@ -129,16 +126,23 @@
                   tbody
                     tr.attribute(v-for="skill in Skills")
                       td
-                        b-button(size="is-small") {{ skill }}
+                        b-button(size="is-small", @click="rollSkill(skill)") {{ skill }}
                       td
                         b-select.skill-attr(type="number", size="is-small", v-model="character.skillAttrs[skill]")
                           option(v-for="attr in Attributes", :key="attr", :value="attr") {{ attr }}
                       td
                         b-input.skill-value(type="number", size="is-small", min="-1", max="4", v-model.number="character.skills[skill]")
 
+            .column.is-half
+              RollBox(ref="rollbox")
+
 </template>
 
 <style lang="sass" scoped>
+.clickable
+  cursor: pointer
+  &:active
+    box-shadow: 0 0 3px $primary
 .scroll
   overflow: auto
   border: 1px solid $grey-light
@@ -167,8 +171,11 @@
 
 <script>
 import axios from 'axios'
+import RollBox from '@/components/RollBox'
 import _sortedLastIndex from 'lodash/sortedLastIndex'
 import _mapValues from 'lodash/mapValues'
+
+const modifier = m => m >= 0 ? `+${m}` : `${m}`
 
 const Attributes = [
   'Strength'
@@ -231,6 +238,7 @@ function attributeMod(v){
 export default {
   name: 'Character'
   , components: {
+    RollBox
   }
   , data: () => ({
     Attributes
@@ -314,6 +322,16 @@ export default {
   }
   , methods: {
     attributeMod
+    , rollSave(type){
+      const name = `${type} saving throw`
+      this.$refs.rollbox.roll('d20', name, '>=' + this.savingThrows[type])
+    }
+    , rollSkill(type){
+      const skillAttr = this.character.skillAttrs[type]
+      const attr = this.attributeMods[skillAttr]
+      const expr = '2d6' + modifier(this.character.skills[type]) + modifier(attr)
+      this.$refs.rollbox.roll(expr, `${type} + ${skillAttr}`)
+    }
   }
 }
 </script>

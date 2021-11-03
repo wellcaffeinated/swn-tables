@@ -1,22 +1,19 @@
 <template lang="pug">
 .rolls.box
-  .level
-    .level-left
-      h6.title Rolling Board
-    .level-right
-      b-field(grouped)
-        b-field
-          b-button(@click="roll('d2')") d2
-        b-field
-          b-button(@click="roll('d6')") d6
-        b-field
-          b-button(@click="roll('2d6')") 2d6
-        b-field
-          b-button(@click="roll('d10')") d10
-        b-field
-          b-button(@click="roll('d20')") d20
+  h6.heading.is-size-6 Roll History
   .content.scroll(style="height: 300px", ref="scroll")
       Roll(v-for="h in rollHistory", :roll="h", @click="roll(h.expression)")
+  b-field(grouped)
+    b-field
+      b-button(@click="roll('d2')") d2
+    b-field
+      b-button(@click="roll('d6')") d6
+    b-field
+      b-button(@click="roll('2d6')") 2d6
+    b-field
+      b-button(@click="roll('d10')") d10
+    b-field
+      b-button(@click="roll('d20')") d20
   b-field
     b-input(ref="input", placeholder="eg: 1d6+2", v-model="rollExpression", @keydown.native.enter="roll(rollExpression)", @keydown.native.up="historyBack", @keydown.native.down="historyForward")
 </template>
@@ -42,7 +39,7 @@ export default {
   }
   , data: () => ({
     rollExpression: ''
-    , rollHistory: [evaluateRollExpression('2d6-5')]
+    , rollHistory: [{ result: evaluateRollExpression('2d6-5') }]
     , historyBackPosition: 0
   })
   , mounted(){
@@ -58,11 +55,15 @@ export default {
         , type: 'is-danger'
       })
     }
-    , roll(expression){
+    , roll(expression, name, comparison){
       if (!expression){ return }
       try {
-        const r = evaluateRollExpression(expression)
-        this.rollHistory.push(r)
+        const result = evaluateRollExpression(expression)
+        this.rollHistory.push({
+          name
+          , comparison
+          , result
+        })
       } catch (e){
         this.error(e)
       }

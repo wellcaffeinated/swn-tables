@@ -28,8 +28,8 @@ function roll(count, dice){
 }
 
 export class UnknownRollExpression extends Error {
-  constructor(){
-    super('Unknown Roll Expression')
+  constructor(expr){
+    super('Unknown Roll Expression: ' + expr)
   }
 }
 
@@ -38,7 +38,7 @@ const rollExprReg = /^\s*((?<sign>[+-]?)\s*((?<value>\d+)|((?<count>\d+)?d(?<dic
 // Evaluate a roll expression like "2d6+5"
 export function evaluateRollExpression(expr){
   let result = expr.match(rollExprReg)
-  if (!result){ throw new UnknownRollExpression() }
+  if (!result){ throw new UnknownRollExpression(expr) }
 
   result = result.groups
   result.count = result.count === undefined ? 1 : result.count
